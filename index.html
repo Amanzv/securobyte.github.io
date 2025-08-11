@@ -1,294 +1,575 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Securobyte</title>
+  <link rel="icon" href="https://www.securobyte.com/Files/Images/LOGO.svg" type="image/svg+xml">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Securobyte - No Bug, No Pay | Application & Smart Contract Security</title>
+  <meta name="description" content="Securobyte provides pentesting, adversary simulation, smart contract audits and security transformation. No Bug, No Pay." />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Securobyte — No Bug, No Pay" />
+  <meta property="og:description" content="We find security issues before attackers do. Pentesting, red team, smart contract audits and security transformation." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://via.placeholder.com/1200x630.png?text=Securobyte" />
+  <meta property="og:url" content="https://securobyte.com" />
+  <meta name="theme-color" content="#0b1220" />
 
-<!-- Meta Tags for SEO -->
-<meta name="description" content="SecuroByte offers advanced cybersecurity services including penetration testing, appsec audits, and consulting. Trusted by global tech companies.">
-<meta name="keywords" content="SecuroByte, Cybersecurity, Penetration Testing, Bug Bounty, AppSec, Network Security, Smart Contract Audits">
-<meta name="author" content="SecuroByte Team">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- Open Graph Tags for Social Sharing -->
-<meta property="og:title" content="SecuroByte | Cybersecurity Experts">
-<meta property="og:description" content="We help businesses secure their digital infrastructure through expert-led penetration testing and security audits.">
-<meta property="og:image" content="https://securobyte.com/Files/Images/LOGO.svg">
-<meta property="og:url" content="https://securobyte.com">
-<meta property="og:type" content="website">
+  <style>
+    :root{
+      --accent-1: #7c3aed; /* purple */
+      --accent-2: #06b6d4; /* teal */
+      --glass-bg: rgba(255,255,255,0.04);
+    }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(180deg,#02040a 0%, #06010a 45%, #03020a 100%); color: #e6eef8; -webkit-font-smoothing:antialiased; }
+    .cyber-title { font-family: 'Orbitron', sans-serif; letter-spacing: .6px; }
+    .glass { background: var(--glass-bg); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.06); }
+    .neon { box-shadow: 0 6px 30px rgba(124,58,237,0.06); }
+    .neon-glow { transition: box-shadow .25s ease, transform .18s ease; }
+    .neon-glow:hover { box-shadow: 0 0 20px rgba(124,58,237,0.25), 0 0 40px rgba(6,182,212,0.12); transform: translateY(-3px); }
 
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="SecuroByte | Cybersecurity Experts">
-<meta name="twitter:description" content="We provide expert-led security audits, pentests, and threat consulting.">
-<meta name="twitter:image" content="https://securobyte.com/Files/Images/LOGO.svg">
+    /* entrance animation (applied via JS when in-view) */
+    .invisible-y { opacity: 0; transform: translateY(18px); transition: opacity .6s cubic-bezier(.2,.9,.2,1), transform .6s cubic-bezier(.2,.9,.2,1); }
+    .visible-y { opacity: 1; transform: translateY(0); }
 
-<!-- Structured Data (Schema.org JSON-LD) -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "SecuroByte",
-  "url": "https://securobyte.com",
-  "logo": "https://securobyte.com/Files/Images/LOGO.svg",
-  "sameAs": [
-    "https://www.linkedin.com/company/securobyte/about/",
-    "https://twitter.com/securobyte",
-    "https://www.instagram.com/securobyte/",
-    "https://t.me/securobyte"
-  ],
-  "description": "SecuroByte provides expert cybersecurity services including pentesting, vulnerability research, appsec consulting, and smart contract audits."
-}
-</script>
+    /* subtle outline hover */
+    .outline-hover { transition: box-shadow .18s ease; }
+    .outline-hover:hover { box-shadow: 0 0 0 3px rgba(124,58,237,0.08) inset; }
 
-    <link rel="icon" href="Files/Images/HeadLogo.png" type="image/icon type">
-    <link rel="stylesheet" href="Files/SCSS/style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap" rel="stylesheet">
+    /* avatar style */
+    .avatar {
+      width:64px; height:64px; border-radius:999px;
+      display:inline-flex; align-items:center; justify-content:center; font-weight:700;
+      color:white; font-family:'Orbitron',sans-serif;
+      background: linear-gradient(135deg, rgba(124,58,237,1), rgba(6,182,212,1));
+      box-shadow: 0 6px 20px rgba(2,6,23,.6);
+    }
+
+    /* particle canvas sizing fallback */
+    #particles { width:100%; height:100%; display:block; }
+
+    /* small helpers */
+    .muted { color: #98a3b8; }
+    .accent { color: var(--accent-1); }
+    @media (prefers-reduced-motion: reduce) {
+      .invisible-y { transition: none; transform: none; opacity: 1; }
+    }
+  </style>
 </head>
 <body>
-    <div class="Nav">
-        <div class="logo"><img src="Files/Images/LOGO.svg" alt=""></div>
-        <div class="navig">
-            <a href="#Home">Home</a>
-            <a href="#services">Services</a>
-            <a href="#team">Team</a>
-            <a href="#whyus">Why Us</a>
-            <a href="#contact">Contact Us</a>
-        </div>
+
+<!-- HEADER -->
+  <header class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-xl overflow-hidden shadow-lg flex items-center justify-center">
+        <img src="https://www.securobyte.com/Files/Images/LOGO.svg" alt="Securobyte Logo" class="w-full h-full object-contain p-1" />
+      </div>
+      <div>
+        <div class="text-lg font-semibold cyber-title">Securobyte</div>
+        <div class="text-xs muted -mt-1">No Bug, No Pay</div>
+      </div>
+
+    <!-- desktop nav -->
+    <nav class="hidden md:flex gap-6 items-center text-sm muted">
+      <a href="#home" class="hover:accent">Home</a>
+      <a href="#services" class="hover:accent">Services</a>
+      <a href="#team" class="hover:accent">Team</a>
+      <a href="#contact" class="hover:accent">Contact</a>
+      <a href="#contact" class="ml-4 inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-teal-400 text-black px-4 py-2 rounded-lg font-medium shadow neon-glow">Book a Demo</a>
+    </nav>
+
+    <!-- mobile hamburger -->
+    <div class="md:hidden">
+      <button id="hamburger" aria-label="Open menu" class="p-2 rounded-md bg-transparent border border-transparent hover:border-white/6">
+        <svg id="hamburgerIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#cbd5e1"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
     </div>
-    <div class="Nav_Mob">
-        <div class="mob_logo"><img src="Files/Images/LOGO.svg" alt=""></div>
-        <div class="NavDiv_mob">
-            <div class="burger" id="burger">
-                <i class="bi bi-list"></i>
-            </div>
-            <div class="burger" id="close">
-                <i class="bi bi-x"></i>
-            </div>
-            <div id="NavList" class="navlinks">
-                <a href="#Home">Home</a>
-                <a href="#services">Services</a>
-                <a href="#team">Team</a>
-                <a href="#whyus">Why Us</a>
-                <a href="#contact">Contact Us</a>
-            </div>
+  </header>
+
+  <!-- mobile menu -->
+  <div id="mobileMenu" class="md:hidden fixed inset-x-4 top-20 bg-[#06121b]/80 glass rounded-xl p-4 shadow-lg z-40 hidden">
+    <nav class="flex flex-col gap-3 text-slate-200">
+      <a href="#home" class="py-2 px-3 rounded outline-hover">Home</a>
+      <a href="#services" class="py-2 px-3 rounded outline-hover">Services</a>
+      <a href="#team" class="py-2 px-3 rounded outline-hover">Team</a>
+      <a href="#contact" class="py-2 px-3 rounded outline-hover">Contact</a>
+      <a href="#contact" class="mt-2 inline-block bg-gradient-to-r from-purple-600 to-teal-400 text-black px-4 py-2 rounded-lg font-medium text-center">Book a Demo</a>
+    </nav>
+  </div>
+
+  <!-- MAIN -->
+  <main id="home" class="max-w-7xl mx-auto px-6">
+
+    <!-- HERO -->
+    <section class="relative grid grid-cols-1 md:grid-cols-2 gap-8 items-center pt-10 pb-12">
+      <div class="space-y-6">
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight text-slate-100 cyber-title">We find security issues before attackers do.</h1>
+        <p class="text-lg muted max-w-xl">Pentesting, adversary simulation, and smart contract audits, delivered by practitioners. If we don’t find a bug, you don’t pay.</p>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="#contact" class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-teal-400 text-black px-5 py-3 rounded-lg font-semibold shadow neon-glow">Book an Audit</a>
+          <a href="#services" class="inline-flex items-center gap-2 px-5 py-3 rounded-lg glass outline-hover">Our Services</a>
         </div>
-    </div>
-    <div id="Home">
-        <div class="landing">
-       
-            <div class="content">
-                <h1>SECUROBYTE</h1>
-                <!--<h3>Cyber security</h3>-->
-                <h3>
-                    <span
-                        class="txt-rotate"
-                        data-period="1000"
-                        data-rotate='[ "Penetration Testing |", "Application Security Assessment |", "Blockchain Testing Services |", "Network Security Monitoring |", "Cybersecurity Consulting |" ]'>
-                    </span>
-                </h3>
-                <span><a href="mailto:securobyte@gmail.com" target="blank"><button class="CTA">Get In Touch</button></a><a href="#services"><button class="normal">Explore More</button></a></span>
-            </div>
-            <div class="illustration">
-                <img src="Files/Images/illustration.svg" alt="">
-            </div>
-        </div>
-    </div>
-    <div id="services">
-        <h3 id="S_Head">Services</h3>
-        <div class="servicecon">
-            <span class="serviceTab T1">
-                <div class="icon"><i class="bi bi-shield"></i></div>
-                <div class="SC">
-                    <h3>PENETRATION TESTING</h3>
-                    <p class="Hide">Penetration testing to help rectifying critical vulnerabilities among the website a & other products which help to fix them before any hacker exploits it</p>
-                </div>
-            </span>
-            <span class="serviceTab T2">
-                <div class="icon"><i class="bi bi-shield"></i></div>
-                <div class="SC">
-                    <h3>APPLICATION SECURITY ASSESMENT </h3>
-                    <p>An in-depth hunt for business logic flaws and implementation vulnerabilities in applications</p>
-                </div>
-            </span>
-            <span class="serviceTab T3">
-                <div class="icon"><i class="bi bi-shield"></i></div>
-                <div class="SC">
-                    <h3>BLOCKCHAIN TESTING SERVICES</h3>
-                    <p> With skyrocketing adoption of BLOCKCHAIN TECHNOLOGY , blockchain technology is primed to transform the tech world</p>
-                </div>
-            </span>
-            <span class="serviceTab T4">
-                <div class="icon"><i class="bi bi-shield"></i></div>
-                <div class="SC">
-                    <h3>NETWORK SECURITY MONITORING</h3>
-                    <p>24x7x365 Network security monitoring services., Spending too much time sorting through logs or you don’t have time at all for this tedious task, a network security monitoring service might be right for you</p>
-                </div>
-            </span>
-            <span class="serviceTab T5">
-                <div class="icon"><i class="bi bi-shield"></i></div>
-                <div class="SC">
-                    <h3>CYBERSECURITY CONSULTING</h3>
-                    <p>We tailor a plan for your business based on our expertise in Cybersecurity, Cybersecurity consulting helps proactively identify security threats and gaps in companies IT environments</p>
-                </div>
-            </span>
-        </div>
-        <div class="aftereffect">
-            <div class="AfterTile T1After">
-                <div class="icon"><i class="bi bi-shield"></i></div>
-                <div class="SC">
-                    <h3>PENETRATION TESTING</h3>
-                    <p class="Show">Penetration testing to help rectifying critical vulnerabilities among the website a & other products which help to fix them before any hacker exploits it, we approach these things in an methodogical way to uncover even the smallest vulnerabilities in the system.</p>
-                </div>
-            </div>
-            <div class="AfterTile T2After">
-                <div class="icon"><i class="bi bi-shield"></i></div>
-                <div class="SC">
-                    <h3>APPLICATION SECURITY ASSESMENT</h3>
-                    <p class="Show">An in-depth hunt for business logic flaws and implementation vulnerabilities in applications of any kind, from large cloud-based solutions to embedded and mobile applications INCLUDES IOS/ANDROID LATEST VULNERABILITIES.</p>
-                </div>
-            </div>
-            <div class="AfterTile T3After">
-                <div class="icon"><i class="bi bi-shield"></i></div>
-                <div class="SC">
-                    <h3>BLOCKCHAIN TESTING SERVICES</h3>
-                    <p class="Show">With skyrocketing adoption OF BLOCKCHAIN TECHNOLOGY , blockchain technology is primed to transform the tech world. This is exactly the kind of attention that attracts some of the most motivated attackers, irrespective of their skill level. It’s true that security is central to this new tech. Its core tenant is to provide the means to perform virtual transactions defined by unscathed data integrity. However, this doesn’t mean the blockchain is intrinsically secure. There are points of failure in your blockchain ecosystem that require tech solutions, processes, and training to mitigate. WE COVER THESE TESTING OF A) BLOCKCHAIN CORE  B) SMART CONTRACT/ DAPPS & ECOSYSTEM APPS
-                    </p>
-                </div>
-            </div>
-            <div class="AfterTile T4After">
-                <div class="icon"><i class="bi bi-shield"></i></div>
-                <div class="SC">
-                    <h3>NETWORK SECURITY MONITORING</h3>
-                    <p class="Show">24x7x365 Network security monitoring services., Spending too much time sorting through logs or you don’t have time at all for this tedious task, a network security monitoring service might be right for you. 24x7x365 Network security monitoring services. We work 24x7 of 365 days to cover the monitoring, analysis, storage, and investigation of security incidents </p>
-                </div>
-            </div>
-            <div class="AfterTile T5After">
-                <div class="icon"><i class="bi bi-shield"></i></div>
-                <div class="SC">
-                    <h3>CYBERSECURITY CONSULTING</h3>
-                    <p class="Show">We tailor a plan for your business based on our expertise in Cybersecurity, Cybersecurity consulting helps proactively identify security threats and gaps in companies IT environments, 24/7 Cyber Security Consulting Services & Support.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="team">
-        <h3>Our Team</h3>
-        <div class="group">
-            <div class="tile">
-                <img src="Files/Images/Perry.svg" alt="">
-                <div>
-                    <h3>AMAN SHARMA</h3>
-                    <p>FOUNDER & CEO/SMART CONTRACT AUDITOR & NETWORK SECURITY SPECIALIST</p>
-                    <span><a href="https://www.linkedin.com/in/aman-sharma-951286116/?originalSubdomain=in" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin"></i></a><a href="https://twitter.com/@Amannoobda" target="_blank" rel="noopener noreferrer"><i class="bi bi-twitter"></i></a></span>
-                </div>
-            </div>
-            <div class="tile" id="Divya">
-                <img src="Files/Images/Elsa.svg" alt="">
-                <div>
-                    <h3>DIVYA SINGH</h3>
-                    <p><br>CO-FOUNDER & CTO(Chief Technology Officer)/VULNERABILITY RESEARCHER & EXPLOIT DEVELOPER</p>
-                    <span><a href="https://www.linkedin.com/in/divya-singh-18a2111b8/?originalSubdomain=in" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin"></i></a><a href="https://twitter.com/@dgirlwhohacks" target="_blank" rel="noopener noreferrer"><i class="bi bi-twitter"></i></a></span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="whyus">
-        <h3>Why Securobyte?</h3>
-        <p>Because we’re easy to work with. We take the work seriously. We’re not prickly, precious or pretentious.
-            We focus on results. For us, it’s all about what adds value for you and your business. Above all, we want our words to work for you.
-            Because we’re chosen by professionals. We’re the ‘go-to cybersecurity-specialist’ for dozens of companies
-            Because we don’t cost the earth. We’re not in London, we’re not a big agency and we know you want to keep a lid on costs.
-            We have professional team with over 3+ years of experience in Security Domain & we are willing to deliver the best to you 
-        </p>
-        <section class="workedwith">
-            <h3>Worked With</h3>
+
+        <!-- credibility badges -->
+        <div class="flex gap-4 mt-4 items-center">
+          <div class="glass px-4 py-3 rounded-lg flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-[#0b1220] flex items-center justify-center">🔒</div>
             <div>
-                <img src="https://getcrypto.info/images/logos/near_protocol.png" alt="">
-                <img src="https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_170,w_170,f_auto,b_white,q_auto:eco,dpr_1/upuwbgprmodgr4kulhsh" alt="">
-                <img src="https://assets.coingecko.com/coins/images/7024/large/Robonomics-Network-logo.png?1547043451" alt="">
-                <img src="https://s2.coinmarketcap.com/static/img/coins/200x200/8836.png" alt="">
-                <img src="https://pbs.twimg.com/profile_images/910826544817491968/lwk377Gr_400x400.jpg" alt="">
-                <img src="https://cdn.coinranking.com/WyBm4_EzM/ftx-exchange.svg">
-                <img src="data:image/png;base64,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">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAhFBMVEX/////ZgD/YAD/pob/XAD/zLv/3M7/upz/ch3/YgD/WQD/1MH/8er/7eL/kmX/k2D/+fP/v6T/gEH/VAD/18b//fn/sI7/oXf/dSr/mGn/0Lz/4tP/5tn/7+b/fTv/1sT/yK//hkr/ror/p4H/ezL/dCL/aw//nXL/jlz/jFb/tJT/iVGVrwsRAAADMUlEQVR4nO3d21ajMBSA4QZjhWDHtlTF6th2tJ7m/d9v0AvXLAt7RxES8P/vtyuf0MNqCZ1MiIiIiIiIiIiIiIjem63ywzbX557jN/lxTfnvTtf8mRals3U5e+WzyEVaP27d7abztfs0v3eZaShxW238fNk8nhWPPQDUyqRpga8Va2V8KY67u14MYpdWWqExdi6OvyjjxbQnR2OnTl6hsRfS+LkCNNmuL0lTW3WJqTS+0v5Bxvk+IXfVkfgwejuI0hJPtH+QcTe9WerzEJ4K4x7C0A/EzoUWYdchRDgKofSmBiHCHkKIECHC7kOIEOEghO0+xUDYeQgRIkTYfQgRjkIojSNE2EMIESJE2H0IESJE2H0IESJE2H0If4IwkcYRIuwhhMZk0jhChD2E8CcIxfc0F/r4qi9KQ7rQzYTxZePew3fhojdLfR6vh5fN01N1Y5fJyv4wtelC4xo3WZ4a9RBWB/FPn57DPITG3dVe2jbf+gAr4lnQLc8+QpPY/fK26v61siz3VemDVZ9H38dN+rX2j+2fib2E1aPpME9e47xXidvJu3S/TRiu5KHlJtTohSa5GrvQFNLWslEI7XbswqTdC+oQhEcIEcYeQoQIw4cQIcLwIUSIMHwIESIMH0KECMOHECHCb+vLX7IOQ5hZVz6dfWiXNN8o+78GIUzSRe2X1dMn/XKVQQhd843L11Y9jAMQijfMnqlXdMQvTJ7FFay1EzV+oXiL16pn5TyNXqheS7FSztPohVb77YGJcppGLxSv3nyrlE/T+IXq5TBPoxf+QogQIUKECBEiRIgQIUKExqn7upQPaqIX6ttkH4YuPFGWMC/kPxC9MNsrS1gM/bM29cM2bT5+ocnEZ9MrbQVDEKYCUfsd1EEITZY0naiznb7VdgjC6rGYvkxvZh+63v7Vv1sbirA6jNYd5OMbjLBFCBEiDB9ChAjDhxAhwvAhRIgwfAgRIgwfQoQIw4cQ4eiF+u2qg5dI26b0co/tcYFzm1bCyefulhugzLQDTtbKtR7BK/KWwslJEfNhzIpvuKf79N7ZWHPL6/bAqll+HGd50HudExEREREREREREVFk/QOuenvdz5gsLQAAAABJRU5ErkJggg==" alt="">
-                <img src="http://cdn.shopify.com/s/files/1/2252/5177/products/82a3f5ed41430b741b0017deabcf5bea_1024x1024.jpg?v=1620934421" alt="">
-                <img src="https://builtin.com/cdn-cgi/image/fit=scale-down,sharpen=0.3,f=auto,q=100,w=170,h=170/sites/www.builtin.com/files/2021-06/ShapeShift%20lOGO.png" alt="">
-                <!-- <img src="https://play-lh.googleusercontent.com/gamrbP28jFb6B_nv3VvYqSLOFtkmKZuMJ9_Lq7bsZWD_DUrznfUl8pTu7_R0LtK5Fys" alt=""> -->
-                <img src="https://cdn.prod.website-files.com/668b3a82199c56fe12067652/668b3a82199c56fe12067710_logo_color.svg">
-                <img src="https://cryptototem.com/wp-content/uploads/2021/01/Axentro-logo.jpg">
-                <img src="https://www.marketbeat.com/logos/cryptocurrencies/bbank.png">
-                <img src="https://cryptologos.cc/logos/origintrail-trac-logo.png">
-                <img src="https://cryptototem.com/wp-content/uploads/2018/06/Taraxa-logo.jpg">
-                <img src="https://media-exp1.licdn.com/dms/image/C4E0BAQFuqdzGC7-tfQ/company-logo_200_200/0/1593706900519?e=2159024400&v=beta&t=FZ9jowVm3T64Glodm_zf7Yna00mL_Z3uvfXLU871TpI">
-                <img src="https://atomicwallet.io/images/press-kit/atomic_wallet_logo_dark_rounded_2.png">
+              <div class="text-sm font-semibold">No Bug, No Pay</div>
+              <div class="text-xs muted">Fair, outcome-based audits</div>
             </div>
-        </section>
-    </div>
-    <div id="customers">
-        <h3>Reviews</h3>
-        <div class="C_Review" id="ScrollC">
-            <div class="RT">
-                <img src="Files/Images/vlad.jpeg" alt="">
-                <h4>Vlad Faraon</h4>
-                <h5>Co-Founder at Coreto.io | The Reputation-based Research Hub for Cryptocurrencies</h5>
-                <p>"Following a security audit provided by Aman, we managed to identify and fix a few important vulnerabilities. I recommend him as a professional individual with good security skills and ethics."</p>
+          </div>
+          <div class="glass px-4 py-3 rounded-lg flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-[#0b1220] flex items-center justify-center">⚡</div>
+            <div>
+              <div class="text-sm font-semibold">Fast Turnaround</div>
+              <div class="text-xs muted">Result-focused remediation</div>
             </div>
-            <div class="RT">
-                <img src="Files/Images/rafael.jpeg" alt="">
-                <h4>Rafael Chiang</h4>
-                <h5>Head of Information Security | Blockchain | DeFi</h5>
-                <p>"Divya reported some vulnerabilities through my corporate bounty program. The reports where accurate and well written, which facilitated my team to close these vulnerabilities quickly. Dealing with Divya was easy, and I would recommend working with her."</p>
-            </div>
-            <div class="RT">
-                <img src="Files/Images/tcs_paul.jpeg" alt="">
-                <h4>Paul Amalraj</h4>
-                <h5>Information Security Manager at TCS</h5>
-                <p>"Aman is a highly skilled security researcher who proactively looks out for issues in products and services that are available on the internet. He ethically reports the issues to the concerned stakeholders so that they can verify and fix if applicable. Aman is highly recommended both for his skill and professionalism."</p>
-            </div>
-            <div class="RT">
-                <img src="Files/Images/daniel.jpeg" alt="">
-                <h4>Daniel Helm </h4>
-                <h5>Developer Evangelist at Skynet Labs</h5>
-                <p>"I'm very thankful for Divya's work. She reached out to our open-source project to reveal several privacy and security issues in our web stack. She communicated the details quickly, clearly, and discretely, which helped us find the root issue and get it fixed.   Attention to security is under-emphasized in the open-source world and Divya's willingness to devote her time and expertise was a real kindness."</p>
-            </div>
+          </div>
         </div>
-        <span id="leftslide"><i class="bi bi-chevron-compact-left"></i></span>
-        <span id="rightslide"><i class="bi bi-chevron-compact-right"></i></span>
-    </div>
-    <footer id="contact">
-        <div class="fcon">    
-            <div class="content">
-                <h3>Contact Us</h3>
-                <div>
-                    <i class="bi bi-envelope"></i>
-                    <p>securobyte@gmail.com</p>
-                </div>
-                <div class="f_socials">
-                    <a href="https://www.instagram.com/securobyte/" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i> </a>
-                    <a href="https://twitter.com/@securobyte" target="_blank" rel="noopener noreferrer"><i class="bi bi-twitter"></i> </a>
-                    <a href="https://t.me/securobyte" target="_blank" rel="noopener noreferrer"><i class="bi bi-telegram"></i> </a>
-                    <a href="https://www.linkedin.com/company/securobyte/about/" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin"></i></a>
-                    </div>
-                    <hr class="hor_line">
-                <span class="cr_container">
-                    <div class="copyright" style="margin: 10px;">
-                        <span>2023 Securobyte. All Rights Reserved.</span>
-                        <img src="/Files/Images/bx_bx-copyright.svg" alt="" class="copyrightlogo">
-                    </div>
-                    <div style="margin: 10px;">
-                       
-                    </div>
-                </span>
-            </div>
-            <img src="/Files/Images/LOGO.svg" alt="">
+      </div>
+
+      <!-- particle canvas -->
+      <div class="hidden md:block">
+        <div class="relative w-full h-80 rounded-xl overflow-hidden glass">
+          <canvas id="particles" class="w-full h-full"></canvas>
+          <div class="absolute inset-0 flex items-end justify-center pb-6">
+            <div class="bg-gradient-to-r from-purple-700/20 to-transparent rounded-full px-4 py-2 text-xs muted">Trusted by DeFi & enterprise teams</div>
+          </div>
         </div>
-    </footer>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="py-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="glass p-6 rounded-lg text-center invisible-y" data-io>
+        <div class="text-3xl font-bold accent">+250</div>
+        <div class="muted mt-1">Bugs Found</div>
+      </div>
+      <div class="glass p-6 rounded-lg text-center invisible-y" data-io>
+        <div class="text-3xl font-bold accent">+150</div>
+        <div class="muted mt-1">Clients Protected</div>
+      </div>
+      <div class="glass p-6 rounded-lg text-center invisible-y" data-io>
+        <div class="text-3xl font-bold accent">+500</div>
+        <div class="muted mt-1">Assets Secured</div>
+      </div>
+    </section>
+
+<!-- SERVICES -->
+<section id="services" class="py-10">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold cyber-title">Our Security Services</h2>
+      <p class="muted mt-1 max-w-xl">
+        Comprehensive, results-driven security engagements  from precision pentesting to strategic security transformation. 
+        We focus on realistic, high-impact testing and actionable remediation.
+      </p>
+    </div>
+    <div class="hidden md:block muted text-sm">Tailored scopes • Strict NDA & confidentiality guaranteed</div>
+  </div>
+
+  <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Pentesting -->
+    <article class="glass p-6 rounded-xl invisible-y" data-io>
+      <div class="flex items-start gap-4">
+        <div>
+          <h3 class="font-semibold">Penetration Testing</h3>
+          <p class="muted text-sm mt-1">
+            In-depth manual and automated testing of external, internal, and cloud environments. 
+            Includes detailed proof-of-concept exploits, root cause analysis, and prioritized remediation guidance.
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Adversary Simulation -->
+    <article class="glass p-6 rounded-xl invisible-y" data-io>
+      <div class="flex items-start gap-4">
+        <div>
+          <h3 class="font-semibold">Adversary Simulation & Red Teaming</h3>
+          <p class="muted text-sm mt-1">
+            Real-world attack simulations aligned with your threat landscape. 
+            Test your people, processes, and technology against advanced persistent threat (APT) tactics, techniques, and procedures (TTPs).
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Smart Contract Audits -->
+    <article class="glass p-6 rounded-xl invisible-y" data-io>
+      <div class="flex items-start gap-4">
+        <div>
+          <h3 class="font-semibold">Smart Contract Auditing</h3>
+          <p class="muted text-sm mt-1">
+            Comprehensive manual audits and formal verification for Solidity, Vyper, and EVM-compatible contracts. 
+            Identifies logic flaws, vulnerabilities, and gas inefficiencies with exploit demonstrations.
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Security Transformation -->
+    <article class="glass p-6 rounded-xl invisible-y" data-io>
+      <div class="flex items-start gap-4">
+        <div>
+          <h3 class="font-semibold">Security Transformation Programs</h3>
+          <p class="muted text-sm mt-1">
+            Long-term security enablement, integrating secure-by-design principles into your development lifecycle. 
+            Covers tooling, process optimization, policy creation, and team training.
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Training -->
+    <article class="glass p-6 rounded-xl invisible-y" data-io>
+      <div class="flex items-start gap-4">
+        <div>
+          <h3 class="font-semibold">Security Training & Workshops</h3>
+          <p class="muted text-sm mt-1">
+            Practical, scenario-based training for developers, DevOps, and leadership. 
+            Focused on secure coding, cloud security, incident response, and emerging threat trends.
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Maturity Assessment -->
+    <article class="glass p-6 rounded-xl invisible-y" data-io>
+      <div class="flex items-start gap-4">
+        <div>
+          <h3 class="font-semibold">Security Maturity Assessment</h3>
+          <p class="muted text-sm mt-1">
+            Holistic evaluation of your organization’s current security posture. 
+            Provides a detailed gap analysis, benchmarking against industry standards, and a phased improvement roadmap.
+          </p>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+
+    <!-- CTA BANNER -->
+    <section class="py-8 mt-8">
+      <div class="glass p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <div class="text-lg font-semibold">Ready to secure your product?</div>
+          <div class="muted text-sm">Book a scoped audit or a discovery call — NDA included.</div>
+        </div>
+        <div class="flex gap-3">
+          <a href="#contact" class="bg-gradient-to-r from-purple-600 to-teal-400 px-5 py-3 rounded-lg font-medium text-black neon-glow">Book a Demo</a>
+          <a href="#services" class="glass px-4 py-3 rounded-lg text-sm">See Services</a>
+        </div>
+      </div>
+    </section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="py-10">
+  <h3 class="text-2xl font-bold cyber-title">What our clients say</h3>
+  <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="glass p-6 rounded-xl invisible-y" data-io>
+      <div class="text-sm font-semibold">
+      <img src="https://media.licdn.com/dms/image/v2/C5603AQGpBO4SdvDMXQ/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1516658648642?e=1757548800&v=beta&t=VTR3kFDnsqCa0wS3sxvu3eKOdQi6tSODmFUyorYIOeQ" alt="Rafael" class="w-12 h-12 rounded-full object-cover">
+        Rafael Chiang - Head of Information Security | Blockchain | DeFi
+      </div>
+      <p class="muted mt-2">“Divya reported some vulnerabilities through my corporate bounty program. The reports where accurate and well written, which facilitated my team to close these vulnerabilities quickly. Dealing with Divya was easy, and I would recommend working with her”</p>
+    </div>
+    <div class="glass p-6 rounded-xl invisible-y" data-io>
+      <div class="text-sm font-semibold">
+      <img src="https://www.tcs.com/content/dam/global-tcs/en/images/home/tcs-logo-white-new.svg" alt="Paul" class="w-15 h-12 rounded-full object-cover">
+        Paul Amalraj - Information Security Manager at TCS
+      </div>
+      <p class="muted mt-2">“Aman is a highly skilled security researcher who proactively looks out for issues in products and services that are available on the internet. He ethically reports the issues to the concerned stakeholders so that they can verify and fix if applicable. Aman is highly recommended both for his skill and professionalism.”</p>
+    </div>
+    <div class="glass p-6 rounded-xl invisible-y" data-io>
+      <div class="text-sm font-semibold">
+      <img src="https://media.licdn.com/dms/image/v2/C5603AQFugEQZLjPkfw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1598294488602?e=1757548800&v=beta&t=sUg5rchiMq2rigyd67tsElNzLna_NP5coh4LfRuPAs0" alt="Daniel" class="w-12 h-12 rounded-full object-cover">
+        Daniel Helm -  Developer Relations at Scroll 📜 
+      </div>
+      <p class="muted mt-2">“I'm very thankful for Divya's work. She reached out to our open-source project to reveal several privacy and security issues in our web stack. She communicated the details quickly, clearly, and discretely, which helped us find the root issue and get it fixed. Attention to security is under-emphasized in the open-source world and Divya's willingness to devote her time and expertise was a real kindness.”</p>
+    </div>
+    <div class="glass p-6 rounded-xl invisible-y" data-io>
+      <div class="text-sm font-semibold">
+<img src="https://media.licdn.com/dms/image/v2/C4E03AQG6v13-2D3Lqw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1616404894103?e=1757548800&v=beta&t=xFkc_8AjFfzddMy-cvJraP1uwWObQPTAh3_2GxTR0VQ" 
+     alt="Vlad" 
+     class="w-12 h-12 rounded-full object-cover">Vlad Faraon - Co-Founder at Coreto.io
+      </div>
+      <p class="muted mt-2">“Following a security audit provided by Aman, we managed to identify and fix a few important vulnerabilities. I recommend him as a professional individual with good security skills and ethics.”</p>
+    </div>
+  </div>
+</section>
+
+
+    <!-- TEAM -->
+<section id="team" class="py-10 border-t border-white/6">
+  <h3 class="text-2xl font-bold cyber-title text-center">Meet the Team</h3>
+  <p class="muted text-center mt-2 max-w-2xl mx-auto">Experienced security practitioners — auditors, incident responders, and red teamers.</p>
+
+  <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Aman Sharma -->
+    <article class="glass p-6 rounded-xl flex gap-4 items-start invisible-y" data-io>
+      <div>
+      <img src="https://media.licdn.com/dms/image/v2/D4D03AQE8JZvIpwoFHg/profile-displayphoto-shrink_200_200/B4DZWI.8o9G8AY-/0/1741759958402?e=1757548800&v=beta&t=uFzHReSl7W84VU9o9U7fKTjyKeRwDasZYWwW93Wa4Ho" style="width:80px;height:80px;border-radius:50%;">
+        <div class="font-semibold">Aman Sharma <span class="text-xs text-gray-400">(Amannoobda)</span></div>
+        <div class="text-xs accent mt-1">Founder & Lead Auditor</div>
+        <p class="muted mt-3 text-sm">OSCP-certified security researcher specializing in application security and smart contract audits. Focus on high-severity vulnerabilities and pragmatic fixes.</p>
+        <div class="flex gap-3 mt-3 text-sm">
+          <a href="https://www.linkedin.com/in/amannoobda/" target="_blank" class="hover:underline">LinkedIn</a>
+          <a href="https://twitter.com/Amannoobda" target="_blank" class="hover:underline">Twitter</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Divya Singh -->
+    <article class="glass p-6 rounded-xl flex gap-4 items-start invisible-y" data-io>
+      <div>
+      <img src="https://media.licdn.com/dms/image/v2/D4D03AQGWAk4bLWijdA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1732770915220?e=1757548800&v=beta&t=btRKDAzqNYMgF-mjd_7w8agmQX-Z743QVl5wCUdzyaQ" style="width:80px;height:80px;border-radius:50%;">
+        <div class="font-semibold">Divya Singh <span class="text-xs text-gray-400">(Dgirlwhohacks)</span></div>
+        <div class="text-xs accent mt-1">Co-Founder & Android/iOS Security</div>
+        <p class="muted mt-3 text-sm">Specialist in mobile application security with expertise in Android & iOS exploit research and secure architecture design.</p>
+        <div class="flex gap-3 mt-3 text-sm">
+          <a href="https://www.linkedin.com/in/dgirlwhohacks/" target="_blank" class="hover:underline">LinkedIn</a>
+          <a href="https://twitter.com/dgirlwhohacks" target="_blank" class="hover:underline">Twitter</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Sirtaj Khan -->
+    <article class="glass p-6 rounded-xl flex gap-4 items-start invisible-y" data-io>
+      <div>
+      <img src="https://media.licdn.com/dms/image/v2/D5603AQGUKArXULAoRw/profile-displayphoto-scale_200_200/B56ZePNzf0HoAY-/0/1750454451969?e=1757548800&v=beta&t=hKGTiAs250qIR8wyij1irdDWkyow93VuHGLuDFBMyek" style="width:80px;height:80px;border-radius:50%;">
+        <div class="font-semibold">Sirtaj Khan <span class="text-xs text-gray-400">(ksirtaj7)</span></div>
+        <div class="text-xs accent mt-1">SOC Analyst & Backend Developer</div>
+        <p class="muted mt-3 text-sm">Designs adversary simulations, purple-team exercises, and builds backend systems to strengthen detection and response capabilities.</p>
+        <div class="flex gap-3 mt-3 text-sm">
+          <a href="https://www.linkedin.com/in/sirtajkhan/" target="_blank" class="hover:underline">LinkedIn</a>
+          <a href="https://twitter.com/ksirtaj7" target="_blank" class="hover:underline">Twitter</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+
+    <!-- CONTACT -->
+    <section id="contact" class="py-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <div class="space-y-4">
+          <h3 class="text-2xl font-bold cyber-title">Get in touch</h3>
+          <p class="muted">Tell us about your scope - codebases, deployments, or smart contracts. We’ll reply with a proposed plan and NDA.</p>
+
+          <div class="mt-6 space-y-3">
+            <div class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 8.5v7A2.5 2.5 0 0 0 5.5 18h13a2.5 2.5 0 0 0 2.5-2.5v-7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="text-sm">hello@securobyte.com</div>
+            </div>
+
+          </div>
+        </div>
+
+        <form id="contactForm" class="glass p-6 rounded-xl" novalidate>
+          <div id="formMsg" class="hidden p-3 rounded text-sm"></div>
+
+          <label class="block">
+            <span class="text-xs muted">Name</span>
+            <input id="name" name="name" required type="text" class="mt-1 w-full p-3 rounded bg-[#041022] border border-white/4" placeholder="Your full name" />
+          </label>
+
+          <label class="block mt-3">
+            <span class="text-xs muted">Email</span>
+            <input id="email" name="email" required type="email" class="mt-1 w-full p-3 rounded bg-[#041022] border border-white/4" placeholder="you@company.com" />
+          </label>
+
+          <label class="block mt-3">
+            <span class="text-xs muted">Message</span>
+            <textarea id="message" name="message" rows="4" required class="mt-1 w-full p-3 rounded bg-[#041022] border border-white/4" placeholder="Brief scope and what you'd like us to do"></textarea>
+          </label>
+
+          <div class="mt-4 flex items-center justify-between gap-4">
+            <button type="submit" class="bg-gradient-to-r from-purple-600 to-teal-400 px-4 py-2 rounded-lg font-semibold text-black">Send Message</button>
+            <div class="text-xs muted">We usually respond within 24 hours (business days).</div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-12 border-t border-white/6">
+    <div class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div>
+        <div class="font-semibold cyber-title text-white">Securobyte</div>
+        <div class="muted mt-2 text-sm">Practical security delivered by experienced operators. No Bug, No Pay.</div>
+      </div>
+
+      <div>
+        <div class="font-semibold text-white">Pages</div>
+        <ul class="mt-3 space-y-2 text-sm muted">
+          <li><a href="#home" class="hover:accent">Home</a></li>
+          <li><a href="#services" class="hover:accent">Services</a></li>
+          <li><a href="#team" class="hover:accent">Team</a></li>
+          <li><a href="#contact" class="hover:accent">Contact</a></li>
+        </ul>
+      </div>
+
+     <div>
+  <div class="font-semibold text-white">Connect</div>
+  <div class="mt-3 flex gap-3">
+
+    <!-- LinkedIn -->
+    <a aria-label="LinkedIn" href="https://www.linkedin.com/in/securobyte-security-819266218/" target="_blank" rel="noopener noreferrer" class="p-2 rounded outline-hover glass">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1">
+        <path d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-4 0v6h-4v-12h4v2a4 4 0 0 1 4-2zM2 9h4v12H2z" stroke-width="1.1"/>
+      </svg>
+    </a>
+
+    <!-- Discord -->
+    <a aria-label="Discord" href="https://discord.com/users/amannoobda" target="_blank" rel="noopener noreferrer" class="p-2 rounded outline-hover glass">
+      <svg width="18" height="18" viewBox="0 0 245 240" fill="#cbd5e1">
+        <path d="M104.4 104.3c-5.7 0-10.2 5-10.2 11.1s4.6 11.1 10.2 11.1c5.7 0 10.2-5 10.2-11.1.1-6.1-4.5-11.1-10.2-11.1zm36.2 0c-5.7 0-10.2 5-10.2 11.1s4.6 11.1 10.2 11.1c5.7 0 10.2-5 10.2-11.1s-4.5-11.1-10.2-11.1z"/>
+        <path d="M189.5 20h-134C24.5 20 10 34.5 10 52.4v135.3c0 17.9 14.5 32.4 32.4 32.4h113.4l-5.3-18.5 12.8 11.9 12.1 11.2 21.5 19.3V52.4C197.9 34.5 183.4 20 165.5 20zM163 145.5s-5.4-6.4-9.9-12.2c19.6-5.5 27.1-17.7 27.1-17.7-6.1 4-11.9 6.8-17.1 8.7-7.5 3.1-14.7 5.1-21.8 6.1-14.3 2.7-27.4 2-38.8-0.1-8.5-1.6-15.8-3.7-21.8-6.1-3.4-1.5-7.2-2.9-11.3-4.8-0.5-0.2-1-0.4-1.5-0.6-0.6-0.3-1.2-0.6-1.8-1-8.6-3.2-14.3-7.5-20.7-13.9 0 0 7.5 12.2 27.3 17.7-4.5 5.9-10 13.3-10 13.3-32.9-1-45.4-22.6-45.4-22.6 0-48 21.5-87 21.5-87 21.5-16.2 41.9-15.8 41.9-15.8l1.5 1.8c-26.8 7.7-39.1 19.3-39.1 19.3s3.3-1.8 8.9-4.3c16.1-7.1 28.9-9 34.2-9.5 0.9-0.1 1.7-0.2 2.6-0.2s1.7 0.1 2.6 0.2c5.3 0.4 18.1 2.3 34.2 9.5 5.6 2.5 8.9 4.3 8.9 4.3s-12.3-11.6-39.1-19.3l1.5-1.8s20.4-0.4 41.9 15.8c0 0 21.5 39 21.5 87 0 0-12.6 21.6-45.4 22.6z"/>
+      </svg>
+    </a>
+
+    <!-- X (Twitter) -->
+    <a aria-label="X" href="https://x.com/securobyte" target="_blank" rel="noopener noreferrer" class="p-2 rounded outline-hover glass">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 3L9.2 21H1l13.8-18H23zM1 3l13.8 18H23L9.2 3H1z"/>
+      </svg>
+    </a>
+
+    <!-- Email -->
+    <a aria-label="Email" href="mailto:hello@securobyte.com" class="p-2 rounded outline-hover glass">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1">
+        <path d="M4 4h16v16H4zM22 6l-10 7L2 6" stroke-width="1.1"/>
+      </svg>
+    </a>
+
+  </div>
+</div>
+
+
+    <div class="max-w-7xl mx-auto px-6 pb-8 text-xs muted">© <span id="year"></span> Securobyte. All rights reserved.</div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script>
+    // year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // particles (lightweight)
+    (function(){
+      const canvas = document.getElementById('particles');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+      function resize(){ canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight; }
+      resize();
+      window.addEventListener('resize', resize);
+      const pts = [];
+      for(let i=0;i<40;i++){
+        pts.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: 0.8 + Math.random()*2.2, dx: (Math.random()-0.5)*0.6, dy: (Math.random()-0.5)*0.6 });
+      }
+      function frame(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        // gradient background accents
+        const g = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+        g.addColorStop(0, 'rgba(124,58,237,0.06)');
+        g.addColorStop(1, 'rgba(6,182,212,0.03)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+
+        ctx.fillStyle = "#9b6cf0";
+        pts.forEach(p=>{
+          ctx.beginPath();
+          ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+          ctx.fill();
+          p.x += p.dx; p.y += p.dy;
+          if(p.x<0||p.x>canvas.width) p.dx *= -1;
+          if(p.y<0||p.y>canvas.height) p.dy *= -1;
+        });
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    })();
+
+    // IntersectionObserver for reveal animations
+    (function(){
+      const ioElements = document.querySelectorAll('[data-io]');
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){
+            e.target.classList.remove('invisible-y');
+            e.target.classList.add('visible-y');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      ioElements.forEach(el=>{
+        // set initial state
+        el.classList.add('invisible-y');
+        io.observe(el);
+      });
+    })();
+
+    // contact form handling (simple validation + success message)
+    (function(){
+      const form = document.getElementById('contactForm');
+      const msg = document.getElementById('formMsg');
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // simple validation
+        const name = form.name.value.trim();
+        const email = form.email.value.trim();
+        const message = form.message.value.trim();
+        if(!name || !email || !message){
+          msg.className = 'p-3 rounded text-sm bg-red-600/20 text-red-200';
+          msg.textContent = 'Please fill in all fields.';
+          msg.classList.remove('hidden');
+          return;
+        }
+        // basic email check
+        if(!/^\S+@\S+\.\S+$/.test(email)){
+          msg.className = 'p-3 rounded text-sm bg-red-600/20 text-red-200';
+          msg.textContent = 'Please provide a valid email address.';
+          msg.classList.remove('hidden');
+          return;
+        }
+
+        // simulate sending (replace with real post to backend)
+        msg.className = 'p-3 rounded text-sm bg-green-600/10 text-green-200';
+        msg.textContent = 'Thanks — your message has been received. We will reply within 24 hours.';
+        msg.classList.remove('hidden');
+
+        // clear fields
+        form.name.value = ''; form.email.value = ''; form.message.value = '';
+      });
+    })();
+
+    // accessibility: close mobile menu on outside click
+    (function(){
+      document.addEventListener('click', (evt)=>{
+        const menu = document.getElementById('mobileMenu');
+        const ham = document.getElementById('hamburger');
+        if(menu.classList.contains('hidden')) return;
+        if(!menu.contains(evt.target) && !ham.contains(evt.target)){
+          menu.classList.add('hidden');
+        }
+      });
+    })();
+  </script>
 </body>
-<script src="Files/JS/Script.js"></script>
-<script src="Files/JS/Typing.js"></script>
-<script src="Files/JS/Carousel.js"></script>
 </html>
