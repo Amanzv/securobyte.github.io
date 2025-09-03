@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Subdomain Takeover Checker | SecuroByte</title>
+  <meta name="description" content="Identify subdomain takeover vulnerabilities by checking DNS records pointing to unclaimed third‑party services." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
+    .badge { @apply px-2 py-0.5 rounded-full text-xs font-semibold; }
+  </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100">
+  <div class="max-w-6xl mx-auto p-6">
+    <header class="mb-6 flex items-center justify-between">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Subdomain Takeover Checker</h1>
+      <a href="/" class="text-sm text-zinc-400 hover:text-zinc-200 underline underline-offset-4">securobyte.com</a>
+    </header>
+
+    <section class="grid gap-4 md:grid-cols-3">
+      <div class="md:col-span-2 bg-zinc-900/60 backdrop-blur rounded-2xl p-4 shadow ring-1 ring-zinc-800">
+        <label for="domains" class="block text-sm font-semibold mb-2">Targets (one per line)</label>
+        <textarea id="domains" class="w-full h-40 rounded-xl bg-zinc-950/60 border border-zinc-800 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-zinc-500" placeholder="blog.example.com\nstore.example.com\nedge.cdn.example.com"></textarea>
+
+        <div class="mt-3 flex flex-wrap gap-2 items-center">
+          <button id="btnRun" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 font-semibold">Run Checks</button>
+          <button id="btnLoadDemo" class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700">Load Demo</button>
+          <label class="inline-flex items-center gap-2 text-sm text-zinc-300">
+            <input type="checkbox" id="resolveA" class="accent-indigo-500" checked>
+            Resolve A/AAAA too
+          </label>
+          <label class="inline-flex items-center gap-2 text-sm text-zinc-300">
+            <input type="checkbox" id="httpProbe" class="accent-indigo-500" checked>
+            HTTP probe (via text proxy)
+          </label>
+          <label class="inline-flex items-center gap-2 text-sm text-zinc-300">
+            <input type="checkbox" id="tryBothSchemes" class="accent-indigo-500" checked>
+            Try http + https
+          </label>
+          <span class="text-xs text-zinc-500">Concurrency:</span>
+          <input id="concurrency" type="number" min="1" max="20" value="6" class="w-16 px-2 py-1 rounded-lg bg-zinc-900 border border-zinc-700 text-sm">
+          <button id="btnExportCSV" class="ml-auto px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700">Export CSV</button>
+          <button id="btnExportJSON" class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700">Export JSON</button>
+        </div>
+        <p class="mt-2 text-xs text-zinc-400">
+          DNS over HTTPS via Cloudflare/Google. HTTP content fetched through <code>r.jina.ai</code> to bypass CORS for fingerprinting. No data stored.
+        </p>
+      </div>
+
+      <aside class="bg-zinc-900/60 rounded-2xl p-4 shadow ring-1 ring-zinc-800">
+        <h2 class="font-semibold mb-2">What we flag</h2>
+        <ul class="list-disc list-inside text-sm text-zinc-300 space-y-1">
+          <li>Dangling <span class="font-mono">CNAME</span> to popular SaaS (e.g., GitHub Pages, S3, Heroku, Azure, Fastly, Shopify, Tumblr, Unbounce, Readme, Surge).</li>
+          <li>Provider-specific error pages (e.g., “NoSuchBucket”, “There isn’t a GitHub Pages site here.”).</li>
+          <li>NXDOMAIN target in CNAME chain.</li>
+          <li>Orphaned CloudFront / CDN aliases.</li>
+        </ul>
+        <p class="mt-2 text-xs text-zinc-400">All results are heuristics. Manually verify before reporting.</p>
+      </aside>
+    </section>
+
+    <section class="mt-6 bg-zinc-900/60 rounded-2xl shadow ring-1 ring-zinc-800 overflow-hidden">
+      <div class="p-4 flex items-center gap-4">
+        <h2 class="font-semibold">Results</h2>
+        <div id="summary" class="text-sm text-zinc-400"></div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-zinc-900/80 text-zinc-300 border-t border-b border-zinc-800">
+            <tr>
+              <th class="text-left p-3">Subdomain</th>
+              <th class="text-left p-3">DNS</th>
+              <th class="text-left p-3">CNAME Chain</th>
+              <th class="text-left p-3">Provider</th>
+              <th class="text-left p-3">HTTP Fingerprint</th>
+              <th class="text-left p-3">Status</th>
+              <th class="text-left p-3">Notes</th>
+            </tr>
+          </thead>
+          <tbody id="tbody" class="divide-y divide-zinc-800"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="mt-8 text-xs text-zinc-500">
+      © <span id="year"></span> SecuroByte — This tool is for defensive testing. Don’t attack systems you don’t own.
+    </footer>
+  </div>
+
+<script>
+const PROVIDERS = [
+  // --- GitHub Pages ---
+  {
+    name: 'GitHub Pages',
+    cname: [/\.github\.io\.?$/, /github\.map\.fastly\.net\.?$/],
+    http: [/There isn't a GitHub Pages site here\./i, /Repository not found/i],
+    evidence: 'Unclaimed GitHub Pages'
+  },
+  // --- Amazon S3 Website ---
+  {
+    name: 'AWS S3 Website',
+    cname: [/s3-website[.-][a-z0-9-]+\.amazonaws\.com\.?$/, /s3\.amazonaws\.com\.?$/],
+    http: [/<Code>NoSuchBucket<\/Code>/i, /The specified bucket does not exist/i],
+    evidence: 'NoSuchBucket'
+  },
+  // --- CloudFront ---
+  {
+    name: 'Amazon CloudFront',
+    cname: [/cloudfront\.net\.?$/],
+    http: [/Bad request\./i, /ERROR\s+The request could not be satisfied\./i],
+    evidence: 'Orphaned/invalid CF alias'
+  },
+  // --- Heroku ---
+  {
+    name: 'Heroku',
+    cname: [/herokudns\.com\.?$/, /herokuapp\.com\.?$/],
+    http: [/no such app/i],
+    evidence: 'No such app'
+  },
+  // --- Azure ---
+  {
+    name: 'Azure Web Apps',
+    cname: [/azurewebsites\.net\.?$/],
+    http: [/404 Web Site not found/i, /The resource you are looking for has been removed/i],
+    evidence: 'App not found'
+  },
+  {
+    name: 'Azure Blob Storage',
+    cname: [/blob\.core\.windows\.net\.?$/],
+    http: [/<Code>ResourceNotFound<\/Code>/i, /The specified resource does not exist/i],
+    evidence: 'Container not found'
+  },
+  // --- Fastly ---
+  {
+    name: 'Fastly',
+    cname: [/fastly\.net\.?$/],
+    http: [/Fastly error: unknown domain/i],
+    evidence: 'Unknown domain'
+  },
+  // --- Shopify ---
+  {
+    name: 'Shopify',
+    cname: [/myshopify\.com\.?$/],
+    http: [/Sorry, this shop is currently unavailable\./i],
+    evidence: 'Shop unavailable'
+  },
+  // --- Tumblr ---
+  {
+    name: 'Tumblr',
+    cname: [/domains\.tumblr\.com\.?$/, /tumblr\.com\.?$/],
+    http: [/There's nothing here\./i],
+    evidence: 'Nothing here'
+  },
+  // --- Unbounce ---
+  {
+    name: 'Unbounce',
+    cname: [/unbouncepages\.com\.?$/],
+    http: [/The requested URL was not found on this server\./i],
+    evidence: 'Unclaimed Unbounce page'
+  },
+  // --- ReadMe ---
+  {
+    name: 'ReadMe.io',
+    cname: [/readme\.io\.?$/],
+    http: [/Project doesn'?t exist/i],
+    evidence: 'Project does not exist'
+  },
+  // --- Surge ---
+  {
+    name: 'Surge.sh',
+    cname: [/surge\.sh\.?$/],
+    http: [/project not found/i],
+    evidence: 'Project not found'
+  },
+  // --- Pantheon ---
+  {
+    name: 'Pantheon',
+    cname: [/pantheonsite\.io\.?$/],
+    http: [/The site you were looking for could not be found\./i],
+    evidence: 'Site not found'
+  }
+];
+
+const DNS_TIMEOUT = 8000; // ms
+const HTTP_TIMEOUT = 12000; // ms
+
+const q = (s, d=document) => d.querySelector(s);
+const el = (tag, cls='', text='') => { const e = document.createElement(tag); if(cls) e.className=cls; if(text) e.textContent=text; return e; };
+
+function now() { return new Date().toISOString().replace('T',' ').replace('Z',' UTC'); }
+
+function unique(arr){ return [...new Set(arr.filter(Boolean).map(s=>s.trim().toLowerCase()))]; }
+
+function csvEscape(v){ if(v==null) return ''; const s = String(v).replaceAll('"','""'); return /[",\n]/.test(s) ? `"${s}"` : s; }
+
+async function dohResolve(name, type='CNAME'){
+  const urlCF = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${type}`;
+  const urlGG = `https://dns.google/resolve?name=${encodeURIComponent(name)}&type=${type}`;
+  const headers = { 'accept': 'application/dns-json' };
+  // Race CF then GG fallback
+  try {
+    const r = await Promise.race([
+      fetch(urlCF, {headers}),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('DNS timeout CF')), DNS_TIMEOUT))
+    ]);
+    if(r && r.ok) return r.json();
+  } catch(e) {}
+  const r2 = await fetch(urlGG, {headers});
+  if(!r2.ok) throw new Error('DNS query failed');
+  return r2.json();
+}
+
+function parseAnswers(json){
+  const ans = (json.Answer||[]).map(a=>({name:a.name?.replace(/\.$/,''), type:a.type, data:a.data?.replace(/\.$/,''), TTL:a.TTL}));
+  return ans;
+}
+
+async function resolveChain(host){
+  const chain = [];
+  let cur = host;
+  let safety = 0;
+  while(safety++ < 10){
+    const cnameRes = await dohResolve(cur, 'CNAME').catch(()=>null);
+    const cnameAns = cnameRes ? parseAnswers(cnameRes) : [];
+    const cname = cnameAns.find(a=>a.type===5 || a.type==="CNAME");
+    if(!cname){ break; }
+    chain.push(cname.data.toLowerCase());
+    cur = cname.data.toLowerCase();
+  }
+  return chain;
+}
+
+async function resolveA(host){
+  const a = await dohResolve(host,'A').catch(()=>null);
+  const aaaa = await dohResolve(host,'AAAA').catch(()=>null);
+  return { a: a?parseAnswers(a).map(x=>x.data):[], aaaa: aaaa?parseAnswers(aaaa).map(x=>x.data):[] };
+}
+
+function detectProviderFromChain(chain){
+  for(const p of PROVIDERS){
+    if(p.cname?.some(rx=>chain.some(c=>rx.test(c)))) return p;
+  }
+  return null;
+}
+
+async function fetchText(url){
+  // Use r.jina.ai as a read-only CORS-free fetcher (works for http and https)
+  const controller = new AbortController();
+  const t = setTimeout(()=>controller.abort(), HTTP_TIMEOUT);
+  try{
+    const r = await fetch(`https://r.jina.ai/http://${url}`, {signal: controller.signal});
+    if(r.ok){ clearTimeout(t); return r.text(); }
+  }catch(e){}
+  try{
+    const r2 = await fetch(`https://r.jina.ai/https://${url}`);
+    if(r2.ok) return r2.text();
+  }catch(e){}
+  return '';
+}
+
+function fingerprintBody(body, provider){
+  if(!body) return null;
+  const needles = provider.http || [];
+  for(const rx of needles){ if(rx.test(body)) return provider.evidence || 'Fingerprint matched'; }
+  return null;
+}
+
+function statusBadge(status){
+  const s = status;
+  const map = {
+    'LIKELY_VULNERABLE': 'bg-red-600/90 text-white',
+    'POTENTIAL': 'bg-amber-500/90 text-black',
+    'SAFE': 'bg-emerald-600/90 text-white',
+    'INCONCLUSIVE': 'bg-zinc-600/90 text-white',
+    'ERROR': 'bg-fuchsia-600/90 text-white'
+  };
+  return `<span class="badge ${map[s]||'bg-zinc-700'}">${s}</span>`;
+}
+
+function renderRow(r){
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="p-3 font-mono text-xs">${r.host}</td>
+    <td class="p-3 text-xs">${r.ipv4?.join('<br>')||''}${r.ipv6?.length?'<br>'+r.ipv6.join('<br>'):''}</td>
+    <td class="p-3 text-xs">${(r.cnameChain||[]).map(c=>`<span class='font-mono'>${c}</span>`).join('<br>')}</td>
+    <td class="p-3 text-xs">${r.provider?.name||''}</td>
+    <td class="p-3 text-xs">${r.httpEvidence||''}</td>
+    <td class="p-3">${statusBadge(r.status)}</td>
+    <td class="p-3 text-xs">${r.notes||''}</td>
+  `;
+  return tr;
+}
+
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+async function* pLimit(pool){
+  const queue = [];
+  let active = 0;
+  async function run(task){
+    active++;
+    try{ return await task(); }
+    finally{ active--; }
+  }
+  while(true){
+    const task = queue.shift();
+    if(!task){ await sleep(10); continue; }
+    yield run(task);
+  }
+}
+
+async function runChecks(host, opts){
+  const out = { host, status:'INCONCLUSIVE', ipv4:[], ipv6:[], cnameChain:[], provider:null, httpEvidence:'', notes:'' };
+  try{
+    const chain = await resolveChain(host);
+    out.cnameChain = chain;
+
+    if(opts.resolveA){
+      const {a, aaaa} = await resolveA(host);
+      out.ipv4 = a; out.ipv6 = aaaa;
+    }
+
+    const provider = detectProviderFromChain(chain);
+    out.provider = provider;
+
+    if(!provider){
+      if(chain.length===0){
+        out.status = 'INCONCLUSIVE';
+        out.notes = 'No CNAME; likely apex/ALIAS or direct A/AAAA.';
+      } else {
+        out.status = 'INCONCLUSIVE';
+        out.notes = 'CNAME present but not matching known providers.';
+      }
+      return out;
+    }
+
+    if(opts.httpProbe){
+      // Try fingerprinting using HTTP body via text proxy
+      const body = await fetchText(host);
+      const fp = fingerprintBody(body, provider);
+      if(fp){
+        out.httpEvidence = fp;
+        out.status = 'LIKELY_VULNERABLE';
+        out.notes = 'CNAME to '+provider.name+' with take‑over error page.';
+        return out;
+      }
+      if(opts.tryBothSchemes){
+        // also try provider hostname directly if last CNAME exists
+        const last = chain[chain.length-1];
+        if(last){
+          const proxied = await fetchText(last);
+          const fp2 = fingerprintBody(proxied, provider);
+          if(fp2){
+            out.httpEvidence = fp2 + ' (at target)';
+            out.status = 'LIKELY_VULNERABLE';
+            out.notes = 'Provider target shows unclaimed site.';
+            return out;
+          }
+        }
+      }
+    }
+
+    // If we got here with a provider match but no fingerprint:
+    // Heuristic: If CNAME resolves but provider returns generic 404/410 text often used when resource missing
+    if(opts.httpProbe){
+      const b = await fetchText(host);
+      if(/NoSuchBucket|NoSuchApp|not\s+found|does not exist|Unknown domain/i.test(b||'')){
+        out.httpEvidence = 'Generic missing-resource text';
+        out.status = 'POTENTIAL';
+        out.notes = 'Manual verify.';
+        return out;
+      }
+    }
+
+    out.status = 'SAFE';
+    out.notes = 'CNAME to '+provider.name+' but no takeover indicators.';
+    return out;
+  } catch(e){
+    out.status = 'ERROR';
+    out.notes = e.message||String(e);
+    return out;
+  }
+}
+
+function download(filename, text){
+  const a = document.createElement('a');
+  a.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  a.setAttribute('download', filename);
+  a.style.display='none';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+(function main(){
+  q('#year').textContent = new Date().getFullYear();
+
+  q('#btnLoadDemo').addEventListener('click', ()=>{
+    q('#domains').value = [
+      'blog.example.com',
+      'static.example.com',
+      'docs.example.com',
+      'shop.example.com',
+      'status.example.com'
+    ].join('\n');
+  });
+
+  const tbody = q('#tbody');
+  let lastResults = [];
+
+  q('#btnRun').addEventListener('click', async ()=>{
+    tbody.innerHTML = '';
+    lastResults = [];
+
+    const lines = unique(q('#domains').value.split(/\r?\n/g));
+    const targets = lines.filter(x=>x && /[a-z0-9.-]/i.test(x));
+    if(targets.length===0){ alert('No valid targets.'); return; }
+
+    const opts = {
+      resolveA: q('#resolveA').checked,
+      httpProbe: q('#httpProbe').checked,
+      tryBothSchemes: q('#tryBothSchemes').checked
+    };
+
+    const conc = Math.max(1, Math.min(20, parseInt(q('#concurrency').value||'6',10)));
+
+    q('#summary').textContent = `Running ${targets.length} hosts at ${conc}x concurrency…`;
+
+    // simple concurrency controller
+    let idx = 0; let running = 0; let done = 0;
+    async function next(){
+      if(idx >= targets.length) return;
+      const host = targets[idx++];
+      running++;
+      const result = await runChecks(host, opts);
+      running--; done++;
+      lastResults.push(result);
+      tbody.appendChild(renderRow(result));
+      q('#summary').textContent = `${done}/${targets.length} done (running ${running}) — ${now()}`;
+      if(idx < targets.length) next();
+    }
+    for(let i=0;i<conc && i<targets.length;i++) next();
+  });
+
+  q('#btnExportCSV').addEventListener('click', ()=>{
+    if(!lastResults.length) return alert('Nothing to export.');
+    const headers = ['host','ipv4','ipv6','cnameChain','provider','httpEvidence','status','notes'];
+    const rows = lastResults.map(r=>[
+      r.host,
+      (r.ipv4||[]).join(' '),
+      (r.ipv6||[]).join(' '),
+      (r.cnameChain||[]).join(' -> '),
+      r.provider?.name||'',
+      r.httpEvidence||'',
+      r.status,
+      r.notes||''
+    ]);
+    const csv = [headers.map(csvEscape).join(','), ...rows.map(row=>row.map(csvEscape).join(','))].join('\n');
+    download(`subtake-results-${Date.now()}.csv`, csv);
+  });
+
+  q('#btnExportJSON').addEventListener('click', ()=>{
+    if(!lastResults.length) return alert('Nothing to export.');
+    download(`subtake-results-${Date.now()}.json`, JSON.stringify(lastResults, null, 2));
+  });
+})();
+</script>
+</body>
+</html>
